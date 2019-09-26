@@ -1,0 +1,120 @@
+#!/bin/bash
+
+echo -e '\e[00;33mINSTALANDO ALLIANCE\e[00m'
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' alliance|grep "install ok installed")
+echo "REVISANDO SI ALLIANCE ESTA INSTALADO: $PKG_OK"
+if [ "" == "$PKG_OK" ]; then
+  echo "ALLIANCE NO ESTA INSTALADO... INSTALANDO"
+  sudo apt-get update
+  sudo apt-get --yes install alliance xfonts-100dpi xfonts-75dpi
+  xset +fp /usr/share/fonts/X11/75dpi/
+  xset +fp /usr/share/fonts/X11/100dpi/
+fi
+
+if [[ $(getconf LONG_BIT) = "64" ]]; then
+    echo -e "\e[00;33mSISTEMA CON ARQUITECTURA DE 64 bits\e[00m"
+    #i386_OK=$(dpkg-query -W --showformat='${Status}\n' libncurses5:i386|grep "install ok installed")
+    #echo "REVISANDO SI ALLIANCE:i386 ESTA INSTALADO: $PKG_OK"
+    #if [ "" == "$i386_OK" ]; then
+        #echo "ALLIANCE:i386 NO INSTALADO... INSTALANDO"
+        sudo dpkg --add-architecture i386
+        sudo apt-get update
+        sudo apt-get --yes install libc6:i386 libncurses5:i386 libstdc++6:i386 alliance:i386 libgtk3-nocsd0:i386 xfonts-100dpi xfonts-75dpi
+    #fi
+fi
+
+echo -e '\e[00;33mINSTALANDO GEANY, SI ES POSIBLE\e[00m'
+sudo apt-get --yes install geany geany-plugins geany-plugins-common geany-plugin-addons
+
+if [ ! -f /usr/bin/ocp ]
+then
+    sudo ln -sT /usr/bin/alliance-ocp /usr/bin/ocp &&
+    echo "OCP CORREGIDO"
+else
+    echo "OCP PRESENTE"
+fi
+
+if [ ! -f /usr/bin/genpat ]
+then
+    sudo ln -sT /usr/bin/alliance-genpat /usr/bin/genpat &&
+    echo "GENPAT CORREGIDO"
+else
+    echo "GENPAT PRESENTE"
+fi
+
+echo -e '\e[00;33mREVISANDO DIRECTORIO DE ALLIANCE\e[00m'
+if [ ! -d /etc/alliance/ ]
+then
+    sudo mkdir /etc/alliance
+    echo "DIRECTORIO DE ALLIANCE CREADO"
+else
+    echo "DIRECTORIO DE ALLIANCE PRESENTE"
+fi
+
+if grep -q 'ALLIANCE_TOP' ~/.profile
+then
+    echo 'VARIABLES EN PROFILE PREVIAMENTE CONFIGURADAS'
+else
+    echo 'VARIABLES EN PROFILE NO CONFIGURADAS'
+    echo 'CONFIGURANDO PROFILE'
+    echo 'export ALLIANCE_TOP=/usr' >> ~/.profile &&
+    echo 'export ALLIANCE_CELLS=/usr/share/alliance/cells' >> ~/.profile &&
+    echo 'export MBK_WORK_LIB=.' >> ~/.profile &&
+    echo 'export MBK_CATAL_NAME=CATAL' >> ~/.profile &&
+    echo 'export MBK_IN_PH=ap' >> ~/.profile &&
+    echo 'export MBK_OUT_PH=ap' >> ~/.profile &&
+    echo 'export MBK_TARGET_LIB=$ALLIANCE_CELLS/sxlib' >> ~/.profile &&
+    echo 'export MBK_IN_LO=vst' >> ~/.profile &&
+    echo 'export MBK_OUT_LO=vst' >> ~/.profile &&
+    echo 'export MBK_VDD=vdd' >> ~/.profile &&
+    echo 'export MBK_VSS=vss' >> ~/.profile &&
+    echo 'export MBK_SPI_MODEL=/etc/spimodel.cfg' >> ~/.profile &&
+    echo 'export GRAAL_TECHNO_NAME=/etc/cmos.graal' >> ~/.profile &&
+    echo 'export RDS_TECHNO_NAME=/etc/cmos.rds' >> ~/.profile &&
+    echo 'export RDS_IN=cif' >> ~/.profile &&
+    echo 'export RDS_OUT=cif' >> ~/.profile &&
+    echo 'export XSCH_PARAM_NAME=/etc/xsch.par' >> ~/.profile &&
+    echo 'export XPAT_PARAM_NAME=/etc/xpat.par' >> ~/.profile && 
+    echo 'export XFSM_PARAM_NAME=/etc/xfsm.par' >> ~/.profile && 
+    echo 'export XDG_VTNR=1' >> ~/.profile && 
+    echo 'export DREAL_TECHNO_NAME=/etc/cmos.dreal' >> ~/.profile && 
+    echo 'export MBK_C4_LIB=./cellsC4' >> ~/.profile && 
+    echo 'export ELP_TECHNO_NAME=/etc/prol.elp' >> ~/.profile && 
+    echo 'export SPI_MODEL=/etc/spimodel.cfg' >> ~/.profile &&
+    echo 'export MBK_CATA_LIB=.:$ALLIANCE_CELLS/sxlib:$ALLIANCE_CELLS/dp_sxlib:$ALLIANCE_CELLS/rflib:$ALLIANCE_CELLS/rf2lib:$ALLIANCE_CELLS/ramlib:$ALLIANCE_CELLS/romlib:$ALLIANCE_CELLS/pxlib:$ALLIANCE_CELLS/padlib' >> ~/.profile
+fi
+
+if grep -q 'ALLIANCE_TOP' ~/.bashrc
+then
+    echo 'VARIABLES EN BASHRC PREVIAMENTE CONFIGURADAS'
+else
+    echo 'CONFIGURANDO BASHRC'    
+    echo 'export ALLIANCE_TOP=/usr' >> ~/.bashrc &&
+    echo 'export ALLIANCE_CELLS=/usr/share/alliance/cells' >> ~/.bashrc &&
+    echo 'export MBK_WORK_LIB=.' >> ~/.bashrc &&
+    echo 'export MBK_CATAL_NAME=CATAL' >> ~/.bashrc &&
+    echo 'export MBK_IN_PH=ap' >> ~/.bashrc &&
+    echo 'export MBK_OUT_PH=ap' >> ~/.bashrc &&
+    echo 'export MBK_TARGET_LIB=$ALLIANCE_CELLS/sxlib' >> ~/.bashrc &&
+    echo 'export MBK_IN_LO=vst' >> ~/.bashrc &&
+    echo 'export MBK_OUT_LO=vst' >> ~/.bashrc &&
+    echo 'export MBK_VDD=vdd' >> ~/.bashrc &&
+    echo 'export MBK_VSS=vss' >> ~/.bashrc &&
+    echo 'export MBK_SPI_MODEL=/etc/spimodel.cfg' >> ~/.bashrc &&
+    echo 'export GRAAL_TECHNO_NAME=/etc/cmos.graal' >> ~/.bashrc &&
+    echo 'export RDS_TECHNO_NAME=/etc/cmos.rds' >> ~/.bashrc &&
+    echo 'export RDS_IN=cif' >> ~/.bashrc &&
+    echo 'export RDS_OUT=cif' >> ~/.bashrc &&
+    echo 'export XSCH_PARAM_NAME=/etc/xsch.par' >> ~/.bashrc &&
+    echo 'export XPAT_PARAM_NAME=/etc/xpat.par' >> ~/.bashrc && 
+    echo 'export XFSM_PARAM_NAME=/etc/xfsm.par' >> ~/.bashrc && 
+    echo 'export XDG_VTNR=1' >> ~/.bashrc && 
+    echo 'export DREAL_TECHNO_NAME=/etc/cmos.dreal' >> ~/.bashrc && 
+    echo 'export MBK_C4_LIB=./cellsC4' >> ~/.bashrc && 
+    echo 'export ELP_TECHNO_NAME=/etc/prol.elp' >> ~/.bashrc && 
+    echo 'export SPI_MODEL=/etc/spimodel.cfg' >> ~/.bashrc &&
+    echo 'export MBK_CATA_LIB=.:$ALLIANCE_CELLS/sxlib:$ALLIANCE_CELLS/dp_sxlib:$ALLIANCE_CELLS/rflib:$ALLIANCE_CELLS/rf2lib:$ALLIANCE_CELLS/ramlib:$ALLIANCE_CELLS/romlib:$ALLIANCE_CELLS/pxlib:$ALLIANCE_CELLS/padlib' >> ~/.bashrc
+fi
+
+exit 0
